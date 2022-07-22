@@ -3,4 +3,60 @@ C++ is a compiled language
         1.使用编译器编译代码。
         2.运行编译器输出的可执行文件。
     
-    
+什么是vector
+    连续分配内存的线性序列
+    向量是由单一类型的元素组成的序列，并有一些有用的方法来获取大小。检验向量是否为空，并向向量中添加元素。
+    使用{}进行初始化
+
+auto类型
+    之前的代码中，每个变量的类型都是明确声明的。一般来说，这是没有必要的，编译器可以根据分配的值来确定类型。
+    如果想让代码的读者清楚地了解变量的类型，那么手动声明变量的类型是有帮助的。
+
+文件操作
+    读取文件五部曲---见18_File\Reading_from_File
+        1. 包含头文件
+            //add this for file
+            #include <fstream>
+
+        2. 使用文件路径创建流对象
+            初始化一个流对象 std::fstream my_file; 并将文件路径作为参数传入my_file.open(path)
+            或
+            在一行中完成 std::ifstream my_file(path);
+
+        3. 打开文件
+            my_file.open("files/1.board");
+
+        4. 是否打开成功
+            检测流对象是否创建成功
+            if (my_file){
+                std::cout << "we have this file" << "\n";
+            }else{
+                std::cout << "we DON'T have this file" << "\n";
+            }
+        
+        5. 使用带有getline的while循环，将文件行写入字符串
+            if(my_file){
+                std::cout << "The file stream has been created!" << "\n";
+                std::string line;
+                while (getline(my_file, line)){
+                    std::cout << line << "\n";
+                }
+            }
+
+string处理
+    流化字符串能够单独处理每个字符
+    流化字符串的一种方法是使用一个输入字符串流对象istringstream
+        from <sstream> header
+    一旦一个istringstream对象被创建，字符串的一部分可以使用 提取操作符 “>>” 进行流化和存储
+    提取操作符将一直读到达到空白处或流失败为止
+        字符串只包含空格和可以被转换为ints的字符,
+        istringstream可以越过space识别下一个数字
+
+        字符串有混合类型，则需要更谨慎地处理该字符串
+
+    myreader是一个指针，它指向包含的字符串
+      如果当前指针READ(>>)指向的非数字、错误、结束文件，
+      myreader将返回错误或0或false  
+    每当提取一个内容时，myreader将向右移动到下一个内容
+
+23_adding_data_to_a_vector
