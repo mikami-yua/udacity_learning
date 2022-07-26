@@ -8,6 +8,9 @@ C++ is a compiled language
     向量是由单一类型的元素组成的序列，并有一些有用的方法来获取大小。检验向量是否为空，并向向量中添加元素。
     使用{}进行初始化
 
+    push_back()
+        向vector中增加元素
+
 auto类型
     之前的代码中，每个变量的类型都是明确声明的。一般来说，这是没有必要的，编译器可以根据分配的值来确定类型。
     如果想让代码的读者清楚地了解变量的类型，那么手动声明变量的类型是有帮助的。
@@ -59,4 +62,19 @@ string处理
       myreader将返回错误或0或false  
     每当提取一个内容时，myreader将向右移动到下一个内容
 
-23_adding_data_to_a_vector
+枚举
+    https://en.cppreference.com/w/cpp/language/enum
+    C++允许定义一个自定义类型，它的值限制在列出的特定范围内
+    This custom type is called an "enum".
+
+        We want to limited the possible colors.
+        white
+        black
+        blue
+        red
+    
+    scoped enums
+        => enum + class/structure + name {items}
+
+    unscoped enums (only remove the class/sturcture from scoped enums)
+        => enum + name {items}
