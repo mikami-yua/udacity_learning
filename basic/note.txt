@@ -78,3 +78,20 @@ string处理
 
     unscoped enums (only remove the class/sturcture from scoped enums)
         => enum + name {items}
+
+传递引用变量（pass by reference）
+    //Passing ref
+    int c = 5;
+    cout << "The int c equals: " << c << "\n";//5
+    int d = MultiplyByTwo_passbyreference(c);
+    cout << "The int d equals: " << d << "\n";//10
+    cout << "The int c equals: " << c << "\n";//10
+    //pass pointer in C code
+    int e = 5;
+    cout << "The int e equals: " << e << "\n";//5
+    int f = MultiplyByTwo_passpointer(&e);
+    cout << "The int f equals: " << f << "\n";//10
+    cout << "The int e equals: " << e << "\n";//10
+
+    使用引用和指针同样会导致原值的变化
+    
