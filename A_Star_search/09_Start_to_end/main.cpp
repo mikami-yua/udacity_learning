@@ -12,7 +12,8 @@ using std::vector;
 using std::abs;
 using std::sort;
 
-enum class State {kEmpty, kObstacle, kClosed, kPath};
+// TODO: Add kStart and KFinish enumerators to the State enum.
+enum class State {kStart, kFinish, kEmpty, kObstacle, kClosed, kPath};
 
 // directional deltas, up,left,down,right
 const int delta[4][2]{{-1, 0}, {0, -1}, {1, 0}, {0, 1}};
@@ -50,11 +51,16 @@ vector<vector<State>> ReadBoardFile(string path) {
 
 string CellString(State cell) {
   switch(cell) {
-    case State::kObstacle: return "⛰️   ";
-    case State::kPath: return "⛰️   ";
-    case State::kEmpty: return "E   ";
-    case State::kClosed: return "C   ";
-    default: return "?   ";
+      case State::kObstacle: return "⛰️   ";
+      case State::kPath: return "🚗   ";
+      case State::kEmpty: return "E   ";
+      case State::kClosed: return "C   ";
+      case State::kStart: return "🚦   ";
+      case State::kFinish: return "🏁   ";
+      default: return "?   ";
+    // TODO: Add cases to return "🚦   " for kStart
+    // and "🏁   " for kFinish.
+
   }
 }
 
@@ -255,5 +261,6 @@ int main(){
     TestCompare();
     TestSearch();
     TestCheckValidCell();
+    TestExpandNeighbors();
     TestExpandNeighbors();
 }
