@@ -95,3 +95,17 @@ string处理
 
     使用引用和指针同样会导致原值的变化
     
+常量
+    常量是不变的，即使是只能在运行时被评估也是不变的
+    The major difference between const and constexpr, 
+        is that constexpr must be evaluated at compile time.
+
+    const：我保证不改变这个值
+    constexpr:在编译时被评估的常量
+
+    //j只能在运行时被计算，但是开发者保证初始化之后j的值不会改变
+    const int j=i*2;
+    //相比之下，k可以在编译时被评估
+    constexpr int k=3;
+
+    const的一个常见用法是防止意外地改变一个变量。特别是当它作为一个函数参数被传递给参考时
