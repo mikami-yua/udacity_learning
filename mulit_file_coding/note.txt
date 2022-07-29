@@ -1,0 +1,132 @@
+多文件
+    头文件
+        允许在一个位置收集相关的函数、方法和类声明。
+        然后，可以将相应的定义放在文件中。编译器将标头声明视为“承诺”，即稍后将在代码中找到该定义，
+        因此，如果编译器到达尚未定义的函数，它可以继续编译，直到找到定义。这允许以任意顺序定义函数
+
+        在单文件中，函数的定义顺序有严格的规定
+
+        头文件
+            头文件中的函数声明不需要变量名，只需要变量类型。
+            不过，在声明中写上名字，这样做往往会使代码更容易阅读。
+
+            头文件的#include语句在文件名周围使用了引号""，而不是角括号<>。
+            我们把头文件和.cpp文件存放在同一目录下，引号告诉预处理程序
+            在与当前文件相同的目录中寻找该文件--而不是在通常存放库的目录中寻找。
+
+            最后，有一个预处理器指令。
+                #ifndef HEADER_EXAMPLE_H
+                #define HEADER_EXAMPLE_H
+            在头文件的顶部，同时在尾部有一个 
+                #endif。这被称为 "包含保护include guard"。
+            
+                include guard可以防止同一个文件被多次粘贴到另一个文件中。
+                例如，如果多个文件包含同一个头，然后都被包含到同一个main.cpp中，就可能发生这种情况。
+                ifndef 会检查 HEADER_EXAMPLE_H 是否已经在文件中被定义。如果它还没有被定义。
+                那么就用 #define HEADER_EXAMPLE_H 来定义它，并使用头文件的其余部分。如果HEADER_EXAMPLE_H已经被定义。
+                那么预处理器就不会进入ifndef块。
+        
+        // The contents of header_example.h are included in
+        // the corresponding .cpp file using quotes:
+        //find .h in the same directory as the .cpp file
+    
+    多文件的组织
+        1. .h 就是負責pre-宣告的, 不用想太多, 就是把proto type 宣告在那邊, 
+            有要call 這些function 的人自然要去include 這個.h
+        2. .cpp 只是把sub-function 寫過去而已, 分成不同檔案比較清楚, 一樣, 
+            這些cpp 有用到哪些fun 自己include 對應的.h
+        3. compiler 讀了.h 中的 define 後就沒有error了, 它會去.cpp 裡面找真正的define 
+            是因為build command 有提供 xxx.cpp 它才知道要去裡面看,
+            最後它才在increment_and_sum.cpp 找到當時你在 increment_and_sum.h 裡面定義的function 內容, 
+            所以如果你最後沒有implement .h 中的function會有link error
+        
+        g++ -std=c++17 ./main.cpp ./increment_and_sum.cpp ./vect_add_one.cpp
+
+        在.cpp文件中其实不需要再#include "vect_add_one.h"
+            因為build command 有link到這個檔, 跟include 無關
+        不同名的.cpp文件和.h文件需要#include "vect_add_one.h"
+            因为使用到了里面的函数
+        
+        当存在多个cpp文件时,编译命令：g++ .\main.cpp .\increment_and_sum.cpp .\vector_add_one.cpp 
+            按照调用的顺序进行排列
+
+CMAKE
+    CMake是一个开源的、独立于平台的构建系统。
+    CMake使用文本文件，标记为CMakeLists.txt文件。
+
+    CMakeLists.txt
+    CMakeList.txt文件有一个分层结构，
+    项目的每个目录中都可以包含一个CMakeList.txt文件。
+    这些文件可以用来指定必要软件包的位置、设置构建标志和环境变量、
+        指定构建目标的名称和位置，以及其他操作
+
+    CMake项目
+        一个典型的CMake项目会有一个顶级的CMakeLists.txt和一个构建目录。
+        一般来说，CMake只需要为一个项目运行一次，除非你改变构建选项（例如使用不同的构建标志）。
+
+
+引用【只指向一件事】
+    int& j = i;
+    j和i的地址相同i address: 0x61ff08,j address: 0x61ff08
+    j的值就是i的值。
+    当i的值发生改变时，j的值也随之发生改变
+    当j的值发生改变时，i的值也随之发生改变。
+    reference就是var的一个other name
+
+    在变量前单独使用& &i为取地址
+    在type后使用& int&为引用
+
+指针
+    C++指针只是一个变量，用于存储程序中对象的内存地址
+    这是理解和记住指针的最重要的事情 - 它们基本上跟踪变量在计算机内存中的存储位置。
+
+    //定义一个指向i的指针，并初始化指针的地址为i
+    int* pointer_to_i= &i;
+    pointer_to_i的值为i的内存地址
+        The address of i is:          0x61ff0c
+        The variable pointer_to_i is: 0x61ff0c
+    pointer_to_i的地址为另一个值
+        The address of variable pointer_to_i is: 0x61ff08
+
+    从指针地址获得对象的方法：解引用（de-reference）
+        cout <<*pointer_to_i// 5
+        使用解引用同样可以影响原来的值
+    
+    尽管被指向的对象的类型必须包括在指针声明中。指针对每种类型的对象都持有相同的值。
+        【只是一个存储对象的内存地址】
+    
+    如果一个指针被传递给一个函数，然后被分配给该函数中的一个变量
+        在函数执行完毕后超出了范围，
+        那么该指针将在这一点上有未定义的行为--它所指向的内存可能被程序的其他部分所覆盖。
+    
+    函数返回指针
+        int* AddOne(int& j){
+            return &j;
+        }
+
+    reference and pointer
+        指针和引用在C++中可以具有类似的用例。
+        如前所述，引用和指针都可以用于对函数的逐次引用。
+        此外，它们都提供了访问现有变量的另一种方法：通过变量地址的指针，
+        以及通过该变量的另一个名称进行引用。
+        但是两者之间有什么区别，什么时候应该使用？
+        以下列表总结了指针和引用之间的一些差异，以及何时应使用每个指针和引用
+
+        reference
+            声明引用时必须对其进行初始化。这意味着引用将【始终】指向分配给它的数据。
+            引用不能为空。这意味着引用应指向程序中有意义的数据。
+            当在函数中用于按引用传递时，可以像使用相同类型的变量一样使用引用。
+        pointer 
+            可以在不初始化的情况下声明指针，这很危险。
+            如果错误地发生这种情况，指针可能指向内存中的任意地址，并且与该地址关联的数据可能毫无意义，从而导致未定义的行为和难以解决的错误。
+            指针可以为空。实际上，如果指针没有立即初始化，通常最佳做法是初始化为 ，
+            这是一种特殊类型，指示指针为 null
+            在函数中用于按引用传递时，必须取消引用指针才能访问基础对象
+        
+    引用通常比指针更容易、更安全。
+    作为一个经验法则，在可能的情况下，应使用引用来代替指针：
+        但是，有时无法使用引用。一个示例是对象初始化。
+        您可能希望一个对象存储对另一个对象的引用。
+        但是，如果在创建第一个对象时另一个对象尚不可用，
+        则第一个对象将需要使用指针，而不是引用，因为引用不能为 null。
+        只有在创建另一个对象后，才能初始化引用。
