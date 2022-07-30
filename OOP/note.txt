@@ -1,0 +1,43 @@
+访问控制符
+    在默认情况下，是public的
+
+封装和抽象
+    作用域：
+        在class外定义函数
+            class内的Year(int y);不能再留{}
+
+            void Date::Year(int y){
+                this->year=y;
+            }
+        
+        使用namespace：
+            允许程序员将逻辑上相关的变量和函数组合在一起。
+            命名空间还有助于避免与在程序的不同部分中具有相同名称的变量之间的冲突
+
+            c++标准库使用的命名空间为std
+    
+    Initializer list
+        允许开发者在创建对象之前为对象里的值赋值
+
+        这使得对const对象可以进行赋值，还能保证赋值之后就不再改变
+            class Person{
+                public:
+                Person(string n);
+                string GetName(){
+                    return this->name; 
+                }
+                private:
+                string const name;
+            };
+
+            Person::Person(string n): name(n){}
+
+            // Test
+            int main()
+            {
+                Person alice("Alice");
+                cout<<alice.GetName()<<"\n";
+            }
+    
+    封装（encapsulation）
+        

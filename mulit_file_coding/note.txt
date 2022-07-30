@@ -130,3 +130,9 @@ CMAKE
         但是，如果在创建第一个对象时另一个对象尚不可用，
         则第一个对象将需要使用指针，而不是引用，因为引用不能为 null。
         只有在创建另一个对象后，才能初始化引用。
+
+面向对象
+    class声明在.h文件中
+        只声明函数名 和 成员变量
+        // Using a constructor list in the constructor:
+        Car(string c, int n) : color(c), number(n) {}
