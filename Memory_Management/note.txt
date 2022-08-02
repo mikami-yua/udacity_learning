@@ -333,9 +333,104 @@
     移动语义
         在不同作用域下传递对象
 
+【左值右值 移动语义】
 
 
 5. 智能指针
-    资源获取是初始化 （RAII）
+    资源获取即初始化 （RAII）
+        当进入一个scope，抓取资源并初始化，在scope的最后释放这些资源
     智能指针
+        主要思想：
+            当构造函数被call的时候，分配资源和内存空间，
+                并在离开作用域call析构函数的时候自动deallocate内存空间
+            程序员不需要再考虑什么时候取消分配内存
+            背后的思想是RAII
+        
+        unique_ptr
+            应当首先考虑使用，独占资源
+
+            即使*myClass1 = *myClass2;两个指针指向同一个目标
+            指针的物理地址依然不同
+
+            可以使用.get()函数查看指针的物理地址
+        
+        智能指针new的资源不需要delete
+
+        shared_ptr
+            shared_ptr 允许多个指针指向同一个对象
+
+            shared1.use_count()可以对指针计数
+
+                cout<<shared1.use_count()<<"\n";//1
+                {
+                    std::shared_ptr<int> shared2 = shared1;
+                    cout << shared1.use_count() <<"\n";//2
+                }
+                cout << shared1.use_count() << "\n";//1
+                可以自动再作用域内统计指向目标的指针个数
+
+            shared.reset(new class) 可以重新指定指向的对象
+                std::shared_ptr<MyClass> shared(new MyClass);
+                cout<<"shared pointer count = "<<shared.use_count()<<"\n";//1
+                std::shared_ptr<MyClass> shared2=shared;
+                cout<<"shared pointer count = "<<shared.use_count()<<"\n";//2
+                shared.reset(new MyClass);
+                cout<<"shared pointer count = "<<shared.use_count()<<"\n";//1
+        
+        weak_ptr
+            不影响shared_ptr的计数
+            当shared_ptr指向别处时，弱指针会失效Weak pointer expired!
+
+        指针转换
+            // (1) shared pointer from unique pointer
+            std::shared_ptr<int> sharePtr1=std::move(uniquePtr);
+            // (2) shared pointer from weak pointer
+            std::shared_ptr<int> sharePtr2=weakPtr.lock();
+            // (3) raw pointer from shared (or unique) pointer
+            int *rawPtr=sharedPtr2.get();
+
     转让所有权
+        现有的所有可以将对象传递给函数的写法
+            void f( object* );  // (a)
+            void f( object& ); // (b)
+            void f( unique_ptr<object> ); // (c)
+            void f( unique_ptr<object>& ); // (d)
+            void f( shared_ptr<object> ); // (e)
+            void f( shared_ptr<object>& ); // (f)
+        
+        传递对象参数的首选方法是使用 a） 或 b） 
+            void f( object* );             
+            void f( object& );
+            这样，我们不必担心调用方可能已实现的生存期策略。
+                在我们只想观察对象或对象成员的情况下，使用特定的智能指针可能会过于严格。
+
+            With the non-owning raw pointer or the reference我们可以观察一个对象，
+                从中我们可以假设它的生存期将超过函数参数的生存期。
+                然而，在并发性中，情况可能并非如此，但对于线性代码，我们可以安全地假设这一点。
+            
+            要确定 * 或 & 是否更合适，您应该考虑是否需要表达没有对象
+        
+        将对象传递给函数
+            将对象传递给函数以便函数获得对象所有权（或“使用”对象）的首选方法是使用上述列表中的方法 c）
+            void f( unique_ptr<object> );
+            我们通过值将unique_ptr从调用方传递到函数，然后调用方获取指针和对象的所有权。
+                这只能使用移动语义，因为可能只有一个对唯一指针管理的对象的引用
+            
+            以这种方式传递对象后，调用方将具有无效的unique_ptr，并且该对象现在所属的函数可能会将其销毁或移动到其他位置。
+        
+        In And Out Again 1
+            在某些情况下，我们希望修改unique_ptr并在调用方的上下文中重用它。在这种情况下，上面列表中的方法d）可能是最合适的：
+            void f( unique_ptr<object>& );
+            使用此调用结构，该函数声明它可以修改智能指针，例如，通过将其重定向到另一个对象。
+        
+        Sharing Object Ownership
+            希望表示函数将存储和共享堆上对象的所有权。这可以通过使用上面列表中的方法e）来实现：
+            void f( shared_ptr<object> )
+            将创建传递给函数的共享指针的副本。这样，引用同一堆对象的所有共享指针中的内部引用计数器将递增 1。
+            对于函数需要保留shared_ptr的副本，从而共享对象的所有权的情况，可以建议使用此策略。
+            如果函数的局部作用域不是最终目标，则还可以移动共享指针，这不会增加引用计数，因此更有效。
+        
+        In And Out Again 2
+            可能需要修改共享指针并在调用方的上下文中重用它们
+            void f( shared_ptr<object>& );
+            这种传递共享指针的特殊方式表示函数 f 将修改指针本身
