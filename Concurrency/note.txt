@@ -77,3 +77,18 @@ function object（函数对象）
     在上部分中，已经实现了创建线程，并向其传递一个需要执行的函数。这个部分希望传递一个函数对象实例，这实际是一个object
 
     传递数据，并启动线程使用非常小代码空间到为一个名为lambda函数
+
+Promise and thread
+    反响传输数据，从工作线程向父线程传送
+        传输thread称为promise
+        接收thread称为futrue
+    
+    std::async是一个函数模板 , 用来启用一个异步任务 , 
+        启动起来之后 , 返回一个std::future
+
+        std::launch::deferred
+            std::launch::deferred表示线程入口函数调用被延迟到std::future的wait()或者get()函数调用时才执行
+            如果wait()或者get()没有被调用 , 那么线程就不创建
+            std::launch::deferred : 延迟调用 , 没有线程创建 , 直接在主函数中调用线程入口的函数
+        std::launch::async，那么就是声明的时候就回去创建新的线程
+             
