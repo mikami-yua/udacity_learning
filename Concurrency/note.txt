@@ -43,4 +43,37 @@
                 线程还共享其他依赖于操作系统的资源，如处理器、文件和网络连接。
                 因此，线程的管理开销通常小于进程的管理开销。
                 但是，线程之间没有相互保护，在访问共享进程资源时必须仔细同步以避免冲突。
-        
+    
+    编程：
+        需要增加命令 
+            g++ -std11  main.cpp
+            否则无法识别 error: ‘std::this_thread’ has not been declared
+
+
+    [切换到linux编程，windows到thread环境有点麻烦]
+    linux出现的问题
+        对‘pthread_create’未定义的引用
+            g++ -std=c++11 main.cpp -lpthread 在cmd末尾增加-lpthread的链接库
+        error: ‘std::chrono’ has not been declared
+            g++ -std=c++11 main.cpp 强调以c++ 11为编译标准
+
+
+    运行一个线程
+        //create thread
+        std::thread t(threadFunction);
+        //创建线程并执行函数
+
+        如果程序正常退出，但是未等到子线程结束main函数就结束了
+            会报错
+                terminate called without an active exception
+                已放弃 (核心已转储)
+
+    join()函数是一个等待线程完成函数，主线程需要等待子线程运行结束了才可以结束
+    称为分离线程函数，使用detach()函数会让线程在后台运行，即说明主线程不会等待子线程运行结束才结束
+    detach()函数是子线程的分离函数，当调用该函数后，线程就被分离到后台运行，主线程不需要等待该线程结束才结束
+        detach()进入后台运行并不是被kill了
+    
+function object（函数对象）
+    在上部分中，已经实现了创建线程，并向其传递一个需要执行的函数。这个部分希望传递一个函数对象实例，这实际是一个object
+
+    传递数据，并启动线程使用非常小代码空间到为一个名为lambda函数
